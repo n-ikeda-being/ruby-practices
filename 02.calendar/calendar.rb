@@ -1,25 +1,20 @@
 require 'date'
+require 'optparse'
 
 year_def = Date.today.year
 month_def = Date.today.mon
 
-require 'optparse'
-opt = OptionParser.new
+input = ARGV.getopts("y:", "m:")
 
-opt.on('-y') {|v|}
-opt.on('-m') {|v|}
-
-opt.parse!(ARGV)
-
-year = ARGV[0].to_i
-month = ARGV[1].to_i
-
-#引数がない場合は今月のカレンダーを表示
-if year == 0
+if input["y"]
+  year = input["y"].to_i
+else
   year = year_def
 end
 
-if month == 0
+if input["m"]
+  month = input["m"].to_i
+else
   month = month_def
 end
 
