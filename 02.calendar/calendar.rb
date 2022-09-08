@@ -1,21 +1,23 @@
 require 'date'
 require 'optparse'
 
-year_def = Date.today.year
-month_def = Date.today.mon
+year_today = Date.today.year
+month_today = Date.today.mon
 
 input = ARGV.getopts("y:", "m:")
 
-if input["y"]
-  year = input["y"].to_i
-else
-  year = year_def
-end
+year =
+  if input["y"]
+    input["y"].to_i
+  else
+    year_today
+  end
 
+month =
 if input["m"]
-  month = input["m"].to_i
+  input["m"].to_i
 else
-  month = month_def
+  month_today
 end
 
 title = "#{year}年#{month}月"
@@ -29,13 +31,13 @@ puts week.join(" ")
 print "   " * firstday_dow
 
 wday = firstday_dow
-(1..last_date).each do |date|
+(first_date..last_date).each do |date|
   print date.to_s.rjust(2) + " "
   wday = wday + 1
   if wday % 7 == 0    #土曜日(7の倍数)で改行
-    print "\n"
+    puts
   end
 end
 if wday % 7 != 0
-  print "\n"
+  puts
 end
