@@ -1,22 +1,38 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-file_name = Dir.glob('*')
+all_files = Dir.glob('*')
 
 COLUMN = 3
-SPACE = 15
+SPACE = 3
 
-def all_files(file_name)
-  all_file_quantity = file_name.size.to_f  #全部のファイル数
-  line = (all_file_quantity / COLUMN).ceil #全部のファイル数 ÷ 指定した行数 = 縦の列数 .ceil:切り上げ
-  split_files = file_name.each_slice(line) #全部のファイル数を縦の列数数で分ける
+def main(all_files)
+  line = line(all_files)
+  max_word_file = max_file(all_files)
+  split_files = split_file(all_files, line)
+  output(line, max_word_file, split_files)
+end
 
+def line(all_files)
+  all_file_quantity = all_files.size
+  (all_file_quantity.to_f / COLUMN).ceil
+end
+
+def max_file(all_files)
+  all_files.map(&:length).max
+end
+
+def split_file(all_files, line)
+  all_files.each_slice(line)
+end
+
+def output(line, max_word_file, split_files)
   line.times do |i|
     split_files.each do |files|
-      print files[i].ljust(SPACE) unless files[i].nil?
+      print files[i].ljust(max_word_file + SPACE) unless files[i].nil?
     end
     puts
   end
 end
 
-all_files(file_name)
+main(all_files)
