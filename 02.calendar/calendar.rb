@@ -1,6 +1,5 @@
 require 'date'
 require 'optparse'
-
 input = ARGV.getopts("y:", "m:")
 
 year = Date.today.year
@@ -11,8 +10,8 @@ month = input["y"].to_i if input["y"]
 title = "#{year}年#{month}月"
 first_day_of_month = Date.new(year,month,1)
 first_date = first_day_of_month.day
-firstday_dow = first_day_of_month.wday
 last_date = Date.new(year,month,-1).day
+firstday_dow = first_day_of_month.wday
 week = ["日","月","火","水","木","金","土"]
 
 puts title.center(20)
