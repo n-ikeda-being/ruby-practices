@@ -3,33 +3,33 @@
 
 all_files = Dir.glob('*')
 
-COLUMN = 3
-SPACE = 3
+MAX_COLUMN = 3
+SHOW_FILE_SPACE = 3
 
 def main(all_files)
-  line = line(all_files)
-  max_word_file = max_file(all_files)
-  split_files = split_file(all_files, line)
-  output(line, max_word_file, split_files)
+  row = row(all_files)
+  max_word_file = max_file_size(all_files)
+  splitted_files = split_file(all_files, row)
+  output(row, max_word_file, splitted_files)
 end
 
-def line(all_files)
+def row(all_files)
   all_file_quantity = all_files.size
-  (all_file_quantity.to_f / COLUMN).ceil
+  (all_file_quantity.to_f / MAX_COLUMN).ceil
 end
 
-def max_file(all_files)
+def max_file_size(all_files)
   all_files.map(&:length).max
 end
 
-def split_file(all_files, line)
-  all_files.each_slice(line)
+def split_file(all_files, row)
+  all_files.each_slice(row).map{|arr| p arr}
 end
 
-def output(line, max_word_file, split_files)
-  line.times do |i|
-    split_files.each do |files|
-      print files[i].ljust(max_word_file + SPACE) unless files[i].nil?
+def output(row, max_word_file, splitted_files)
+  row.times do |i|
+    splitted_files.each do |files|
+      print files[i].ljust(max_word_file + SHOW_FILE_SPACE) unless files[i].nil?
     end
     puts
   end
