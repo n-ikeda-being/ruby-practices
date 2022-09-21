@@ -8,7 +8,8 @@ BETWEEN_FILES_SPACE = 3
 
 def main(all_files)
   row = row(all_files)
-  p "row=#{row}"
+#ファイル数が１～９個の場合は縦４列
+  row = 4 if all_files.size <= 9
   max_word_file = max_file_size(all_files)
   splitted_files = split_file(all_files, row)
   output(row, max_word_file, splitted_files)
@@ -27,7 +28,7 @@ end
 
 #rowの数ずつ分割してグループ化
 def split_file(all_files, row)
-  all_files.each_slice(row).map { |a| p a }
+  all_files.each_slice(row).map
 end
 
 def output(row, max_word_file, splitted_files)
