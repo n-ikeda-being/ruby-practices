@@ -3,6 +3,9 @@
 
 all_files = Dir.glob('*')
 
+command_line_option = ARGV[0]
+all_files = Dir.glob('*', File::FNM_DOTMATCH) if command_line_option == '-a'
+
 MAX_NUMBER_OF_COLUMN = 3
 BETWEEN_FILES_SPACE = 3
 
