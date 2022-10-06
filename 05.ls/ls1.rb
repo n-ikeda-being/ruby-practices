@@ -1,10 +1,12 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-all_files = Dir.glob('*')
+require 'optparse'
+opt = OptionParser.new
 
-command_line_option = ARGV[0]
-all_files = Dir.glob('*', File::FNM_DOTMATCH) if command_line_option == '-a'
+all_files = Dir.glob('*')
+opt.on('-r') { all_files = Dir.glob('*').reverse }
+opt.parse!(ARGV)
 
 MAX_NUMBER_OF_COLUMN = 3
 BETWEEN_FILES_SPACE = 3
