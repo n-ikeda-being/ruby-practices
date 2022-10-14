@@ -94,7 +94,7 @@ class Main
                         when '14'
                           FILE_TYPE.values[6]
                         else
-                          '0'
+                          '?'
                         end
   end
 
