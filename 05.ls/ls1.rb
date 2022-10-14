@@ -168,6 +168,7 @@ class Main
   end
 
   def print_date
+    puts '合計：'
     print @output_file_type.to_s + @user_authority.to_s + @group_authority.to_s + @other_authority.to_s
     print " #{@link}"
     print " #{@user_name}"
