@@ -2,6 +2,7 @@
 
 require 'optparse'
 require 'etc'
+require 'date'
 
 all_files = Dir.glob('*')
 
@@ -50,56 +51,62 @@ def output(row, max_file_size, splitted_files)
   end
 end
 
-# Lオプション
 def l_main(all_files)
-  obj = Main.new
-  obj.loutput(all_files)
-  obj.file_type
-  obj.user_authority
-  obj.group_authority
-  obj.other_authority
-  obj.print_date
+  loutput(all_files)
 end
 
-class Main
-  def loutput(all_files)
-    all_files.each_slice(1).each do |files|
-      fs = File::Stat.new(files[0])
-      @file_name = files[0]
-      @link = fs.nlink
-      @user_name  = Etc.getpwuid(fs.uid).name
-      @group_name = Etc.getgrgid(fs.gid).name
-      @byte = fs.size.to_s
-      @files_mode = fs.mode.digits(8)
-      @file_type = @files_mode[4].to_s
-      @file_type = @files_mode[5].to_s + @files_mode[4].to_s if @files_mode[5] == 1
-      @mtime = fs.mtime.to_a
-    end
-  end
+def loutput(all_files)
+  all_files.each_slice(1).each do |files|
+    fs = File::Stat.new(files[0])
+    link = fs.nlink
+    user_name  = Etc.getpwuid(fs.uid).name
+    group_name = Etc.getgrgid(fs.gid).name
+    byte = fs.size.to_s
+    files_mode = fs.mode.digits(8)
+    file_type = files_mode[4].to_s
+    file_type = files_mode[5].to_s + files_mode[4].to_s if files_mode[5] == 1
 
-  def file_type
-    @output_file_type = case @file_type
-                        when '1'
-                          FILE_TYPE.values[0]
-                        when '2'
-                          FILE_TYPE.values[1]
-                        when '4'
-                          FILE_TYPE.values[2]
-                        when '6'
-                          FILE_TYPE.values[3]
-                        when '10'
-                          FILE_TYPE.values[4]
-                        when '12'
-                          FILE_TYPE.values[5]
-                        when '14'
-                          FILE_TYPE.values[6]
-                        else
-                          '?'
-                        end
-  end
+    output_file_type = case file_type
+                       when '1'
+                         FILE_TYPE.values[0]
+                       when '2'
+                         FILE_TYPE.values[1]
+                       when '4'
+                         FILE_TYPE.values[2]
+                       when '6'
+                         FILE_TYPE.values[3]
+                       when '10'
+                         FILE_TYPE.values[4]
+                       when '12'
+                         FILE_TYPE.values[5]
+                       when '14'
+                         FILE_TYPE.values[6]
+                       else
+                         '0'
+                       end
 
-  def user_authority
-    @user_authority = case @files_mode[USER_AUTHORITY]
+    user_authority = case files_mode[USER_AUTHORITY]
+                     when 0
+                       FILE_AUTHORITY.values[0]
+                     when 1
+                       FILE_AUTHORITY.values[1]
+                     when 2
+                       FILE_AUTHORITY.values[2]
+                     when 3
+                       FILE_AUTHORITY.values[3]
+                     when 4
+                       FILE_AUTHORITY.values[4]
+                     when 5
+                       FILE_AUTHORITY.values[5]
+                     when 6
+                       FILE_AUTHORITY.values[6]
+                     when 7
+                       FILE_AUTHORITY.values[7]
+                     else
+                       '?'
+                     end
+
+    group_authority = case files_mode[GROUP_AUTHORITY]
                       when 0
                         FILE_AUTHORITY.values[0]
                       when 1
@@ -119,72 +126,41 @@ class Main
                       else
                         '?'
                       end
-  end
 
-  def group_authority
-    @group_authority = case @files_mode[GROUP_AUTHORITY]
-                       when 0
-                         FILE_AUTHORITY.values[0]
-                       when 1
-                         FILE_AUTHORITY.values[1]
-                       when 2
-                         FILE_AUTHORITY.values[2]
-                       when 3
-                         FILE_AUTHORITY.values[3]
-                       when 4
-                         FILE_AUTHORITY.values[4]
-                       when 5
-                         FILE_AUTHORITY.values[5]
-                       when 6
-                         FILE_AUTHORITY.values[6]
-                       when 7
-                         FILE_AUTHORITY.values[7]
-                       else
-                         '?'
-                       end
-  end
+    other_authority = case files_mode[OTHER_AUTHORITY]
+                      when 0
+                        FILE_AUTHORITY.values[0]
+                      when 1
+                        FILE_AUTHORITY.values[1]
+                      when 2
+                        FILE_AUTHORITY.values[2]
+                      when 3
+                        FILE_AUTHORITY.values[3]
+                      when 4
+                        FILE_AUTHORITY.values[4]
+                      when 5
+                        FILE_AUTHORITY.values[5]
+                      when 6
+                        FILE_AUTHORITY.values[6]
+                      when 7
+                        FILE_AUTHORITY.values[7]
+                      else
+                        '?'
+                      end
 
-  def other_authority
-    @other_authority = case @files_mode[OTHER_AUTHORITY]
-                       when 0
-                         FILE_AUTHORITY.values[0]
-                       when 1
-                         FILE_AUTHORITY.values[1]
-                       when 2
-                         FILE_AUTHORITY.values[2]
-                       when 3
-                         FILE_AUTHORITY.values[3]
-                       when 4
-                         FILE_AUTHORITY.values[4]
-                       when 5
-                         FILE_AUTHORITY.values[5]
-                       when 6
-                         FILE_AUTHORITY.values[6]
-                       when 7
-                         FILE_AUTHORITY.values[7]
-                       else
-                         '?'
-                       end
-  end
-
-  def print_date
-    puts '合計：'
-    print @output_file_type.to_s + @user_authority.to_s + @group_authority.to_s + @other_authority.to_s
-    print " #{@link}"
-    print " #{@user_name}"
-    print " #{@group_name}"
-    print " #{@byte.rjust(5)}"
-    print " #{@mtime[4]}"
-    print '月'
-    print " #{@mtime[3].to_s.rjust(3)}"
-    print " #{@mtime[2].to_s.rjust(3)}"
-    print ':'
-    print @mtime[1].to_s if (@mtime[1]).zero?
-    print 0 if @mtime[1] < 10 && @mtime[1] > 1
-    print @mtime[1].to_s
-    print "  #{@file_name.rjust(5)}"
     puts
+    print output_file_type.to_s + user_authority.to_s + group_authority.to_s + other_authority.to_s
+    print " #{link}"
+    print " #{user_name}"
+    print " #{group_name}"
+    print " #{byte.rjust(5)}"
+    print fs.mtime.strftime('%m月').rjust(5)
+    print fs.mtime.strftime('%d').rjust(5)
+    print fs.mtime.strftime('%I:').rjust(5)
+    print fs.mtime.strftime('%M')
+    print "  #{files[0].rjust(5)}"
   end
+  puts
 end
 
 l_main(all_files) if params[:l]
