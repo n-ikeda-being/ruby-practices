@@ -84,7 +84,7 @@ def l_option(all_files)
     print " #{Etc.getgrgid(fs.gid).name}"
     print " #{fs.size.to_s.rjust(5)}"
     print " #{fs.mtime.strftime('%-m月 %d %H:%M')}"
-    print " #{files.rjust(5)}"
+    print "#{files.rjust(10)}"
   end
   puts
 end
