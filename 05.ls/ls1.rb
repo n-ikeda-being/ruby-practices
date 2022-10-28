@@ -17,8 +17,6 @@ USER_AUTHORITY_NUMBER = 2
 GROUP_AUTHORITY_NUMBER = 1
 OTHER_AUTHORITY_NUMBER = 0
 
-# オプションなし
-
 def main(all_files)
   argv_option = parse_option(ARGV)
   no_option(all_files) unless argv_option[:l]
