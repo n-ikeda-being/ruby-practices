@@ -64,18 +64,18 @@ end
 def l_option(all_files)
   all_files.map do |files|
     fs = File.lstat(files)
-    octal_file_mode = fs.mode.digits(8)
-    octal_file_type = fs.mode.digits(8)[5]
+    OCTAL_FILE_MODE = fs.mode.digits(8)
+    OCTAL_FILE_TYPE = fs.mode.digits(8)[5]
     file_type =
-      if octal_file_type == 1
-        octal_file_type.to_s + octal_file_mode[4].to_s
+      if OCTAL_FILE_TYPE == 1
+        OCTAL_FILE_TYPE.to_s + OCTAL_FILE_MODE[4].to_s
       else
-        octal_file_mode[4].to_s
+        OCTAL_FILE_MODE[4].to_s
       end
     output_file_type = FILE_TYPE[file_type]
-    user_authority = FILE_AUTHORITY[octal_file_mode[USER_AUTHORITY_NUMBER].to_s]
-    group_authority = FILE_AUTHORITY[octal_file_mode[GROUP_AUTHORITY_NUMBER].to_s]
-    other_authority = FILE_AUTHORITY[octal_file_mode[OTHER_AUTHORITY_NUMBER].to_s]
+    user_authority = FILE_AUTHORITY[OCTAL_FILE_MODE[USER_AUTHORITY_NUMBER].to_s]
+    group_authority = FILE_AUTHORITY[OCTAL_FILE_MODE[GROUP_AUTHORITY_NUMBER].to_s]
+    other_authority = FILE_AUTHORITY[OCTAL_FILE_MODE[OTHER_AUTHORITY_NUMBER].to_s]
 
     puts
     print output_file_type.to_s + user_authority.to_s + group_authority.to_s + other_authority.to_s
