@@ -19,8 +19,11 @@ OTHER_AUTHORITY_NUMBER = 0
 
 def main(all_files)
   argv_option = parse_option(ARGV)
-  no_option(all_files) unless argv_option[:l]
-  l_option(all_files) if argv_option[:l]
+  if argv_option[:l]
+     l_option_output(all_files)
+  else
+    no_option_output(all_files)
+  end
 end
 
 def parse_option(argv)
@@ -32,7 +35,7 @@ def parse_option(argv)
   argv_option
 end
 
-def no_option(all_files)
+def no_option_output(all_files)
   row = row(all_files)
   max_file_size = max_file_size(all_files)
   splitted_files = split_file(all_files, row)
@@ -61,14 +64,13 @@ def output(row, max_file_size, splitted_files)
   end
 end
 
-def l_option(all_files)
+def l_option_output(all_files)
   all_files.map do |files|
     fs = File.lstat(files)
     octal_file_mode = fs.mode.digits(8)
-    octal_file_type = fs.mode.digits(8)[5]
     file_type =
-      if octal_file_type == 1
-        octal_file_type.to_s + octal_file_mode[4].to_s
+      if octal_file_mode[5] == 1
+        octal_file_mode[5].to_s + octal_file_mode[4].to_s
       else
         octal_file_mode[4].to_s
       end
@@ -84,7 +86,7 @@ def l_option(all_files)
     print " #{Etc.getgrgid(fs.gid).name}"
     print " #{fs.size.to_s.rjust(5)}"
     print " #{fs.mtime.strftime('%-m月 %d %H:%M')}"
-    print "#{files.rjust(10)}"
+    print " #{files}"
   end
   puts
 end
