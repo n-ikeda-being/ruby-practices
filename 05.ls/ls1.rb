@@ -20,9 +20,9 @@ OTHER_AUTHORITY_NUMBER = 0
 def main(all_files)
   argv_option = parse_option(ARGV)
   if argv_option[:l]
-     l_option_output(all_files)
+    l_option_output(all_files)
   else
-    no_option_output(all_files)
+    without_option_output(all_files)
   end
 end
 
@@ -35,7 +35,7 @@ def parse_option(argv)
   argv_option
 end
 
-def no_option_output(all_files)
+def without_option_output(all_files)
   row = row(all_files)
   max_file_size = max_file_size(all_files)
   splitted_files = split_file(all_files, row)
