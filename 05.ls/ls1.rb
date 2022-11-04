@@ -20,7 +20,7 @@ OTHER_AUTHORITY_NUMBER = 0
 def main(all_files)
   argv_option = parse_option(ARGV)
   all_files = Dir.glob('*', File::FNM_DOTMATCH) if argv_option[:a]
-  all_files = Dir.glob('*', File::FNM_DOTMATCH).reverse if argv_option[:r]
+  all_files = all_files.reverse if argv_option[:r]
   if argv_option[:l]
     l_option_output(all_files)
   else
