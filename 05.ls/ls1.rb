@@ -19,10 +19,12 @@ OTHER_AUTHORITY_NUMBER = 0
 
 def main(all_files)
   argv_option = parse_option(ARGV)
+  all_files = Dir.glob('*', File::FNM_DOTMATCH) if argv_option[:a]
+  all_files = Dir.glob('*', File::FNM_DOTMATCH).reverse if argv_option[:r]
   if argv_option[:l]
     l_option_output(all_files)
   else
-    without_option_output(all_files)
+    without_l_option_output(all_files)
   end
 end
 
@@ -30,12 +32,14 @@ def parse_option(argv)
   argv_option = {}
   OptionParser.new do |opt|
     opt.on('-l') { |v| argv_option[:l] = v }
+    opt.on('-a') { |v| argv_option[:a] = v }
+    opt.on('-r') { |v| argv_option[:r] = v }
     opt.parse!(argv)
   end
-  argv_option
+    argv_option
 end
 
-def without_option_output(all_files)
+def without_l_option_output(all_files)
   row = row(all_files)
   max_file_size = max_file_size(all_files)
   splitted_files = split_file(all_files, row)
@@ -78,7 +82,6 @@ def l_option_output(all_files)
     user_authority = FILE_AUTHORITY[octal_file_mode[USER_AUTHORITY_NUMBER].to_s]
     group_authority = FILE_AUTHORITY[octal_file_mode[GROUP_AUTHORITY_NUMBER].to_s]
     other_authority = FILE_AUTHORITY[octal_file_mode[OTHER_AUTHORITY_NUMBER].to_s]
-
     puts
     print output_file_type.to_s + user_authority.to_s + group_authority.to_s + other_authority.to_s
     print " #{fs.nlink}"
