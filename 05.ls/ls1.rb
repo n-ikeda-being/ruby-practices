@@ -36,7 +36,7 @@ def parse_option(argv)
     opt.on('-r') { |v| argv_option[:r] = v }
     opt.parse!(argv)
   end
-    argv_option
+  argv_option
 end
 
 def without_l_option_output(all_files)
@@ -82,16 +82,10 @@ def l_option_output(all_files)
     user_authority = FILE_AUTHORITY[octal_file_mode[USER_AUTHORITY_NUMBER].to_s]
     group_authority = FILE_AUTHORITY[octal_file_mode[GROUP_AUTHORITY_NUMBER].to_s]
     other_authority = FILE_AUTHORITY[octal_file_mode[OTHER_AUTHORITY_NUMBER].to_s]
-    puts
+
     print output_file_type.to_s + user_authority.to_s + group_authority.to_s + other_authority.to_s
-    print " #{fs.nlink}"
-    print " #{Etc.getpwuid(fs.uid).name}"
-    print " #{Etc.getgrgid(fs.gid).name}"
-    print " #{fs.size.to_s.rjust(5)}"
-    print " #{fs.mtime.strftime('%-m月 %d %H:%M')}"
-    print " #{files}"
+    puts  " #{fs.nlink} #{Etc.getpwuid(fs.uid).name} #{Etc.getgrgid(fs.gid).name} #{fs.size.to_s.rjust(5)} #{fs.mtime.strftime('%-m月 %d %H:%M')} #{files}"
   end
-  puts
 end
 
 main(all_files)
