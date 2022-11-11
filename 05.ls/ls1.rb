@@ -4,8 +4,6 @@ require 'optparse'
 require 'etc'
 require 'date'
 
-all_files = Dir.glob('*')
-
 MAX_NUMBER_OF_COLUMN = 3
 BETWEEN_FILES_SPACE = 3
 
@@ -17,12 +15,12 @@ USER_AUTHORITY_NUMBER = 2
 GROUP_AUTHORITY_NUMBER = 1
 OTHER_AUTHORITY_NUMBER = 0
 
-def main(all_files)
+def main
   argv_option = parse_option(ARGV)
-  all_files = Dir.glob('*', File::FNM_DOTMATCH) if argv_option[:a]
-  all_files = all_files.reverse if argv_option[:r]
+  all_files = all_files_date(argv_option)
   if argv_option[:l]
-    l_option_output(all_files)
+    max_file_size = max_file_size(all_files)
+    l_option_output(all_files,max_file_size)
   else
     without_l_option_output(all_files)
   end
@@ -37,6 +35,13 @@ def parse_option(argv)
     opt.parse!(argv)
   end
   argv_option
+end
+
+def all_files_date(argv_option)
+  all_files = Dir.glob('*')
+  all_files = Dir.glob('*', File::FNM_DOTMATCH) if argv_option[:a]
+  all_files = all_files.reverse if argv_option[:r]
+  all_files
 end
 
 def without_l_option_output(all_files)
@@ -68,7 +73,7 @@ def output(row, max_file_size, splitted_files)
   end
 end
 
-def l_option_output(all_files)
+def l_option_output(all_files,max_file_size)
   all_files.map do |files|
     fs = File.lstat(files)
     octal_file_mode = fs.mode.digits(8)
@@ -84,8 +89,8 @@ def l_option_output(all_files)
     other_authority = FILE_AUTHORITY[octal_file_mode[OTHER_AUTHORITY_NUMBER].to_s]
 
     print output_file_type.to_s + user_authority.to_s + group_authority.to_s + other_authority.to_s
-    puts  " #{fs.nlink} #{Etc.getpwuid(fs.uid).name} #{Etc.getgrgid(fs.gid).name} #{fs.size.to_s.rjust(5)} #{fs.mtime.strftime('%-m月 %d %H:%M')} #{files}"
+    puts  " #{fs.nlink} #{Etc.getpwuid(fs.uid).name} #{Etc.getgrgid(fs.gid).name} #{fs.size.to_s.rjust(max_file_size + BETWEEN_FILES_SPACE)} #{fs.mtime.strftime('%-m月 %d %H:%M')} #{files}"
   end
 end
 
-main(all_files)
+main
