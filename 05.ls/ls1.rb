@@ -20,7 +20,7 @@ def main
   all_files = all_files_date(argv_option)
   if argv_option[:l]
     max_file_size = max_file_size(all_files)
-    l_option_output(all_files,max_file_size)
+    l_option_output(all_files, max_file_size)
   else
     without_l_option_output(all_files)
   end
@@ -73,7 +73,7 @@ def output(row, max_file_size, splitted_files)
   end
 end
 
-def l_option_output(all_files,max_file_size)
+def l_option_output(all_files, max_file_size)
   all_files.map do |files|
     fs = File.lstat(files)
     octal_file_mode = fs.mode.digits(8)
@@ -87,9 +87,10 @@ def l_option_output(all_files,max_file_size)
     user_authority = FILE_AUTHORITY[octal_file_mode[USER_AUTHORITY_NUMBER].to_s]
     group_authority = FILE_AUTHORITY[octal_file_mode[GROUP_AUTHORITY_NUMBER].to_s]
     other_authority = FILE_AUTHORITY[octal_file_mode[OTHER_AUTHORITY_NUMBER].to_s]
+    space = max_file_size + BETWEEN_FILES_SPACE
 
     print output_file_type.to_s + user_authority.to_s + group_authority.to_s + other_authority.to_s
-    puts  " #{fs.nlink} #{Etc.getpwuid(fs.uid).name} #{Etc.getgrgid(fs.gid).name} #{fs.size.to_s.rjust(max_file_size + BETWEEN_FILES_SPACE)} #{fs.mtime.strftime('%-m月 %d %H:%M')} #{files}"
+    puts  " #{fs.nlink} #{Etc.getpwuid(fs.uid).name} #{Etc.getgrgid(fs.gid).name} #{fs.size.to_s.rjust(space)} #{fs.mtime.strftime('%-m月 %d %H:%M')} #{files}"
   end
 end
 
