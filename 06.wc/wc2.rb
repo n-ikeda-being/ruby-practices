@@ -3,57 +3,82 @@
 require 'optparse'
 
 def main
-  params = ARGV.getopts('lwc')
-  file_names = ARGV #入力した場合はARGVに値が入る
+  options = parse_options
   if ARGV.empty?
+    files = $stdin.readlines
     name = nil
+    output_standard(count_line(files), count_word(files), count_size(files), name, options)
+  else
+    output(ARGV, options)
   end
-  files = read_files(file_names) #データ全部取得
-  file_data = create_file_data(files, file_names) # 表示用のデータ生成
-  total_data = total(file_data, params) # 合計値の計算
-  output(file_data, total_data, name, params) # 表示
 end
 
-def read_files(file_names)
-    file = $stdin.readlines # データ全部取得
-    files = [] # 配列作る
-    files.push(file) # 配列に格納
+def parse_options
+  options = {}
+  OptionParser.new do |opt|
+    opt.on('-l') { |v| options[:l] = v }
+    opt.on('-w') { |v| options[:w] = v }
+    opt.on('-c') { |v| options[:c] = v }
+    opt.parse!(ARGV)
+  end
+  options
 end
 
-def without_option(params)
-  !params['l'] && !params['w'] && !params['c']
+def count_line(files)
+  files.join.count("\n")
 end
 
-def create_file_data(files, file_names)
-  file_data =
-    files.map do |file|
-      file_data = {}
-      file_data[:l] = file.map { |lines| lines.count("\n") }.sum # 行数をカウントしてlines変数に格納
-      file_data[:w] = file.map { |words| words.split.count }.sum # 単語数をカウントしてwords変数に格納
-      file_data[:c] = file.map(&:bytesize).sum # byteで配列にして、中身を全部足す
-      name = nil
-      file_data
-    end
+def count_word(files)
+  files.sum { |line| line.split(/\s+/).size }
 end
 
-def total(file_data, params)
-  without_option = without_option(params) # 何のオプションも付いていないとき
-  total_data = {}
-  total_data[:l] = file_data.map { |data| data[:l] }.sum if params['l'] || without_option # 行数の合計
-  total_data[:w] = file_data.map { |data| data[:w] }.sum if params['w'] || without_option # 単語数の合計
-  total_data[:c] = file_data.map { |data| data[:c] }.sum if params['c'] || without_option # byteの合計
-  total_data
+def count_size(files)
+  files.sum(&:size)
 end
 
-def output(file_data, total_data, name, params)
-  without_option = without_option(params)
-  file_data.each do |data|
-    print data[:l].to_s.rjust(10) if params['l'] || without_option
-    print data[:w].to_s.rjust(10) if params['w'] || without_option
-    print data[:c].to_s.rjust(10) if params['c'] || without_option
-    puts " #{name}"
+def output_standard(line, word, size, name, options)
+  print line.to_s.rjust(5) if options[:l] || !options[:l] && !options[:w] && !options[:c]
+  print word.to_s.rjust(5) if options[:w] || !options[:l] && !options[:w] && !options[:c]
+  print size.to_s.rjust(5) if options[:c] || !options[:l] && !options[:w] && !options[:c]
+  puts "  #{name}"
+end
+
+def total(argv, options)
+  total_line = []
+  total_word = []
+  total_size = []
+  argv.each do |file_name|
+    files = File.readlines(file_name)
+    line = count_line(files)
+    word = count_word(files)
+    size = count_size(files)
+    total_line.push(line)
+    total_word.push(word)
+    total_size.push(size)
+  end
+    total_line = total_line.sum
+    total_word = total_word.sum
+    total_size = total_size.sum
+    print total_line.to_s.rjust(5) if options[:l] || !options[:l] && !options[:w] && !options[:c]
+    print total_word.to_s.rjust(5) if options[:w] || !options[:l] && !options[:w] && !options[:c]
+    print total_size.to_s.rjust(5) if options[:c] || !options[:l] && !options[:w] && !options[:c]
+    print "　合計"
+    puts
+end
+
+def output(argv, options)
+  argv.each do |file_name|
+    files = File.readlines(file_name)
+    line = count_line(files)
+    word = count_word(files)
+    size = count_size(files)
+    print line.to_s.rjust(5) if options[:l] || !options[:l] && !options[:w] && !options[:c]
+    print word.to_s.rjust(5) if options[:w] || !options[:l] && !options[:w] && !options[:c]
+    print size.to_s.rjust(5) if options[:c] || !options[:l] && !options[:w] && !options[:c]
+    print "  #{file_name}"
     puts
   end
+  total(argv, options) if argv.size > 1
 end
 
 main
