@@ -7,9 +7,9 @@ def main
   if ARGV.empty?
     files = $stdin.readlines
     name = nil
-    standard_output(count_line(files), count_word(files), count_size(files), name, options)
+    argv_is_empty_output(count_line(files), count_word(files), count_size(files), name, options)
   else
-    argv_output(ARGV, options)
+    argv_is_not_empty_output(ARGV, options)
   end
 end
 
@@ -40,7 +40,7 @@ def without_option(options)
   !options[:l] && !options[:w] && !options[:c]
 end
 
-def standard_output(line, word, size, name, options)
+def argv_is_empty_output(line, word, size, name, options)
   print line.to_s.rjust(5) if options[:l] || without_option(options)
   print word.to_s.rjust(5) if options[:w] || without_option(options)
   print size.to_s.rjust(5) if options[:c] || without_option(options)
@@ -64,17 +64,17 @@ def total(argv, options)
   total_word = total_word.sum
   total_size = total_size.sum
   name = '合計'
-  standard_output(total_line, total_word, total_size, name, options)
+  argv_is_empty_output(total_line, total_word, total_size, name, options)
 end
 
-def argv_output(argv, options)
+def argv_is_not_empty_output(argv, options)
   argv.each do |file_name|
     files = File.readlines(file_name)
     line = count_line(files)
     word = count_word(files)
     size = count_size(files)
     name = file_name
-    standard_output(line, word, size, name, options)
+    argv_is_empty_output(line, word, size, name, options)
   end
   total(argv, options) if argv.size > 1
 end
