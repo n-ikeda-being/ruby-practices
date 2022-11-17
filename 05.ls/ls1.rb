@@ -76,13 +76,7 @@ def output(row, max_file_size, splitted_files)
 end
 
 def length_of_max_size_file(all_files)
-  size = []
-  all_files.map do |files|
-    fs = File.lstat(files)
-    file_size = fs.size.to_s.length
-    size.push(file_size)
-  end
-  size.max
+  all_files.map {|f| File.lstat(f).size.to_s.length }.max
 end
 
 def l_option_output(all_files)
