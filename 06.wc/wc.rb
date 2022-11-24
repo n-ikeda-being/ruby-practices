@@ -29,7 +29,7 @@ def count_line(files)
 end
 
 def count_word(files)
-  files.sum { |line| line.split(/\s+/).size }
+  files.sum { |line| line.split(/[\s+|"　"]/).size }
 end
 
 def count_size(files)
