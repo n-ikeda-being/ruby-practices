@@ -7,9 +7,9 @@ def main
   if ARGV.empty?
     files = $stdin.readlines
     name = nil
-    argv_is_empty_output(count_line(files), count_word(files), count_size(files), name, options)
+    output_data(count_line(files), count_word(files), count_size(files), name, options)
   else
-    argv_is_not_empty_output(ARGV, options)
+    output_arvg_is_not_empty(ARGV, options)
   end
 end
 
@@ -36,18 +36,30 @@ def count_size(files)
   files.sum(&:size)
 end
 
-def without_option(options)
+def has_no_option?(options)
   !options[:l] && !options[:w] && !options[:c]
 end
 
-def argv_is_empty_output(line, word, size, name, options)
-  print line.to_s.rjust(5) if options[:l] || without_option(options)
-  print word.to_s.rjust(5) if options[:w] || without_option(options)
-  print size.to_s.rjust(5) if options[:c] || without_option(options)
+def output_data(line, word, size, name, options)
+  print line.to_s.rjust(5) if options[:l] || has_no_option?(options)
+  print word.to_s.rjust(5) if options[:w] || has_no_option?(options)
+  print size.to_s.rjust(5) if options[:c] || has_no_option?(options)
   puts "  #{name}"
 end
 
-def total(argv, options)
+def output_arvg_is_not_empty(argv, options)
+  argv.each do |file_name|
+    files = File.readlines(file_name)
+    line = count_line(files)
+    word = count_word(files)
+    size = count_size(files)
+    name = file_name
+    output_data(line, word, size, name, options)
+  end
+  get_total(argv, options) if argv.size > 1
+end
+
+def get_total(argv, options)
   total_line = []
   total_word = []
   total_size = []
@@ -64,19 +76,7 @@ def total(argv, options)
   total_word = total_word.sum
   total_size = total_size.sum
   name = '合計'
-  argv_is_empty_output(total_line, total_word, total_size, name, options)
-end
-
-def argv_is_not_empty_output(argv, options)
-  argv.each do |file_name|
-    files = File.readlines(file_name)
-    line = count_line(files)
-    word = count_word(files)
-    size = count_size(files)
-    name = file_name
-    argv_is_empty_output(line, word, size, name, options)
-  end
-  total(argv, options) if argv.size > 1
+  output_data(total_line, total_word, total_size, name, options)
 end
 
 main
