@@ -5,9 +5,9 @@ require 'optparse'
 def main
   options = parse_options
   if ARGV.empty?
-    files = $stdin.readlines
+    stdin = $stdin.readlines
     name = nil
-    output_data(count_line(files), count_word(files), count_size(files), name, options)
+    output_data(count_line(stdin), count_word(stdin), count_size(stdin), name, options)
   else
     output_arvg_is_not_empty(ARGV, options)
   end
@@ -24,16 +24,16 @@ def parse_options
   options
 end
 
-def count_line(files)
-  files.join.count("\n")
+def count_line(data)
+  data.join.count("\n")
 end
 
-def count_word(files)
-  files.sum { |line| line.split(/[\s+|"　"]/).size }
+def count_word(data)
+  data.sum { |line| line.split(/[\s+|"　"]/).size }
 end
 
-def count_size(files)
-  files.sum(&:bytesize)
+def count_size(data)
+  data.sum(&:bytesize)
 end
 
 def has_no_option?(options)
@@ -49,10 +49,10 @@ end
 
 def output_arvg_is_not_empty(argv, options)
   argv.each do |file_name|
-    files = File.readlines(file_name)
-    line = count_line(files)
-    word = count_word(files)
-    size = count_size(files)
+    string_of_file = File.readlines(file_name)
+    line = count_line(string_of_file)
+    word = count_word(string_of_file)
+    size = count_size(string_of_file)
     name = file_name
     output_data(line, word, size, name, options)
   end
@@ -64,10 +64,10 @@ def total(argv, options)
   total_word = []
   total_size = []
   argv.each do |file_name|
-    files = File.readlines(file_name)
-    line = count_line(files)
-    word = count_word(files)
-    size = count_size(files)
+    string_of_file = File.readlines(file_name)
+    line = count_line(string_of_file)
+    word = count_word(string_of_file)
+    size = count_size(string_of_file)
     total_line.push(line)
     total_word.push(word)
     total_size.push(size)
