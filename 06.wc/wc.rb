@@ -33,7 +33,7 @@ def count_word(files)
 end
 
 def count_size(files)
-  files.sum(&:size)
+  files.sum(&:bytesize)
 end
 
 def has_no_option?(options)
@@ -56,10 +56,10 @@ def output_arvg_is_not_empty(argv, options)
     name = file_name
     output_data(line, word, size, name, options)
   end
-  get_total(argv, options) if argv.size > 1
+  total(argv, options) if argv.size > 1
 end
 
-def get_total(argv, options)
+def total(argv, options)
   total_line = []
   total_word = []
   total_size = []
