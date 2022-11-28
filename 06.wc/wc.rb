@@ -5,9 +5,9 @@ require 'optparse'
 def main
   options = parse_options
   if ARGV.empty?
-    stdin = $stdin.readlines
+    input_data = $stdin.readlines
     name = nil
-    output_data(count_line(stdin), count_word(stdin), count_size(stdin), name, options)
+    output_data(count_line(input_data), count_word(input_data), count_size(input_data), name, options)
   else
     output_arvg_is_not_empty(ARGV, options)
   end
@@ -49,10 +49,10 @@ end
 
 def output_arvg_is_not_empty(argv, options)
   argv.each do |file_name|
-    string_of_file = File.readlines(file_name)
-    line = count_line(string_of_file)
-    word = count_word(string_of_file)
-    size = count_size(string_of_file)
+    input_data = File.readlines(file_name)
+    line = count_line(input_data)
+    word = count_word(input_data)
+    size = count_size(input_data)
     name = file_name
     output_data(line, word, size, name, options)
   end
@@ -64,10 +64,10 @@ def total(argv, options)
   total_word = []
   total_size = []
   argv.each do |file_name|
-    string_of_file = File.readlines(file_name)
-    line = count_line(string_of_file)
-    word = count_word(string_of_file)
-    size = count_size(string_of_file)
+    input_data = File.readlines(file_name)
+    line = count_line(input_data)
+    word = count_word(input_data)
+    size = count_size(input_data)
     total_line.push(line)
     total_word.push(word)
     total_size.push(size)
